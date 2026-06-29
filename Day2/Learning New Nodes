@@ -1,0 +1,695 @@
+{
+  "name": "Learning New Nodes",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        800
+      ],
+      "id": "c12af628-0f29-4298-bd26-4bd3c4e00d5c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f4a1916-f371-4fbd-90b9-26616ba8ecaf",
+              "name": "summary",
+              "value": "={{ $('GetCustomers').first().json.name }} is one of {{ $('CountCustomers').first().json.totalCustomers }} customers",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -128
+      ],
+      "id": "a9611ddf-065f-4add-8cf0-699f4c2604cf",
+      "name": "SetSummary"
+    },
+    {
+      "parameters": {
+        "operation": "getAllPeople"
+      },
+      "type": "n8n-nodes-base.n8nTrainingCustomerDatastore",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -128
+      ],
+      "id": "40f1f10c-5a19-4be8-89e9-dfa70524983b",
+      "name": "GetCustomers"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nreturn [{ json: { totalCustomers: $input.all().length } }]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -128
+      ],
+      "id": "b85dcf5f-e6fb-4413-a48b-1c5aa27de172",
+      "name": "CountCustomers"
+    },
+    {
+      "parameters": {
+        "url": "https://blog.n8n.io/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -208,
+        -320
+      ],
+      "id": "abd3d792-d26d-4c2d-ba0b-d01a16b0eb43",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "cssSelector": ".post .item-title a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -320
+      ],
+      "id": "b94f1335-ee4f-4569-a484-f8e74df13c12",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "url": "https://pokeapi.co/api/v2/pokemon",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        368,
+        -320
+      ],
+      "id": "533ea455-81b3-48c3-81ac-33012c0499df",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "mode": "jsonToxml",
+        "dataPropertyName": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -320
+      ],
+      "id": "90598196-11d2-4810-827e-9309385634fc",
+      "name": "XML"
+    },
+    {
+      "parameters": {
+        "operation": "getAllPeople"
+      },
+      "type": "n8n-nodes-base.n8nTrainingCustomerDatastore",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        144
+      ],
+      "id": "0fcc54a9-c343-42bf-881e-8543b41d6e9f",
+      "name": "GetCustomerData"
+    },
+    {
+      "parameters": {
+        "operation": "roundDate",
+        "date": "={{ $json.created }}",
+        "mode": "roundUp",
+        "outputFieldName": "newDate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        112,
+        144
+      ],
+      "id": "03362c2c-0070-4ccd-b7c8-6fa4018978a7",
+      "name": "RoundDate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "afc87539-f6c6-417c-969e-2733d67086c1",
+              "leftValue": "={{ $json.newDate }}",
+              "rightValue": "1960-01-01T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        144
+      ],
+      "id": "cc79208a-d5f5-4460-8d9f-0cacbaa4d0e6",
+      "name": "CheckAfter1960"
+    },
+    {
+      "parameters": {
+        "operation": "addToDate",
+        "magnitude": "={{ $json.newDate }}",
+        "duration": 5,
+        "outputFieldName": "plus5Days",
+        "options": {
+          "includeInputFields": true
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        624,
+        64
+      ],
+      "id": "98f7ed85-c7ef-4c11-a8bf-ec36cf211cd5",
+      "name": "Add5Days"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7161139c-61e4-41f1-9f63-d51cad36ed5a",
+              "name": "newYear",
+              "value": "={{ $json.newDate.toDateTime().plus(20, 'years') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        272
+      ],
+      "id": "ed07ab8d-4ac4-4522-a62e-61b2d6275f73",
+      "name": "Add20Years"
+    },
+    {
+      "parameters": {
+        "url": "https://dog.ceo/api/breeds/image/random",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        528
+      ],
+      "id": "36c7fc37-d110-481d-b5cb-f0326d876efb",
+      "name": "GetDogURL"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        384,
+        528
+      ],
+      "id": "6b90e031-97b8-4e1a-8c84-6d7e79e77c8d",
+      "name": "GetDogImage"
+    },
+    {
+      "parameters": {
+        "operation": "rotate",
+        "rotate": 180,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        608,
+        528
+      ],
+      "id": "1d6f2b44-094d-4083-9845-9349157659b3",
+      "name": "Rotate180"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        -336
+      ],
+      "id": "bb086def-ffb0-4c06-8784-c944dfe27aba",
+      "name": "ConvertToCSV"
+    },
+    {
+      "parameters": {
+        "url": " https://learn.app.n8n.cloud/webhook/countries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1312,
+        -336
+      ],
+      "id": "b7347a99-d75d-4f8e-b28b-74dad68ebbcf",
+      "name": "GetCountries"
+    },
+    {
+      "parameters": {
+        "url": "https://pokeapi.co/api/v2/pokemon?limit=5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1312,
+        -128
+      ],
+      "id": "ba2da6cb-2c0c-456d-80ea-f9bcae328ce1",
+      "name": "GetPokemon"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -128
+      ],
+      "id": "83faa226-9a3e-4027-aab5-e7595de37bd2",
+      "name": "SplitPokemon"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      name: 'Jay Gatsby',\n      country: {\n        name: 'US'\n      }\n    }\n  },\n  {\n    json: {\n      name: 'José Arcadio Buendía',\n      country: {\n        name: 'CO'\n      }\n    }\n  },\n  {\n    json: {\n      name: 'Max Mustermann',\n      country: {\n        name: 'DE'\n      }\n    }\n  },\n  {\n    json: {\n      name: 'John Smith',\n      country: {\n        name: 'UK'\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        288
+      ],
+      "id": "74419cb1-6b10-4d16-9574-3bf3275528f8",
+      "name": "Characters"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1536,
+        192
+      ],
+      "id": "350e2a8b-ae63-49e0-9325-35e2b8b1dfc2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "getAllPeople",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.n8nTrainingCustomerDatastore",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        96
+      ],
+      "id": "ad69f33f-05f6-47fd-a130-ae7ed0251649",
+      "name": "GetCustomerData1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      url: 'https://medium.com/feed/n8n-io'\n    }\n  },\n  {\n    json: {\n      url: 'https://dev.to/feed/n8n'\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        528
+      ],
+      "id": "d04e6700-919b-4f0d-a742-d167c9c53ea7",
+      "name": "FeedURLs"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        528
+      ],
+      "id": "b6ab706e-d242-4948-abfd-ce72adf74f02",
+      "name": "BatchFeeds"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        736
+      ],
+      "id": "84824c8c-51f5-4d8a-9fac-f4c4d08eb949",
+      "name": "ReadFeed"
+    },
+    {
+      "parameters": {
+        "url": "https://httpstat.us/500",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -272,
+        800
+      ],
+      "id": "6495d68b-c472-43d5-aea9-69cb6f597727",
+      "name": "BadRequest",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        720
+      ],
+      "id": "9f33ff32-193d-417d-88dc-38e0390268e7",
+      "name": "Success"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        896
+      ],
+      "id": "21bff51b-6e59-494f-bf2e-a4ecd7e4c4ff",
+      "name": "HandleError"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "BadRequest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCustomers": {
+      "main": [
+        [
+          {
+            "node": "CountCustomers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CountCustomers": {
+      "main": [
+        [
+          {
+            "node": "SetSummary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCustomerData": {
+      "main": [
+        [
+          {
+            "node": "RoundDate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RoundDate": {
+      "main": [
+        [
+          {
+            "node": "CheckAfter1960",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CheckAfter1960": {
+      "main": [
+        [
+          {
+            "node": "Add5Days",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add20Years",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetDogURL": {
+      "main": [
+        [
+          {
+            "node": "GetDogImage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetDogImage": {
+      "main": [
+        [
+          {
+            "node": "Rotate180",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCountries": {
+      "main": [
+        [
+          {
+            "node": "ConvertToCSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetPokemon": {
+      "main": [
+        [
+          {
+            "node": "SplitPokemon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCustomerData1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Characters": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "FeedURLs": {
+      "main": [
+        [
+          {
+            "node": "BatchFeeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BatchFeeds": {
+      "main": [
+        [],
+        [
+          {
+            "node": "ReadFeed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ReadFeed": {
+      "main": [
+        [
+          {
+            "node": "BatchFeeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BadRequest": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HandleError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cbba9212-ed94-48fc-86eb-9e00c97aaf20",
+  "meta": {
+    "instanceId": "1b64597dec4395c39ffbc6b418140ca74fd264cc184186212c5508ae650cb2cc"
+  },
+  "nodeGroups": [],
+  "id": "GcxWUGlT3eTjMKmj",
+  "tags": []
+}
