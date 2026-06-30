@@ -1,0 +1,354 @@
+{
+  "name": "Section 1 - Academy Registration",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "26455bd5-dd53-4375-8764-fe95549c0fed",
+      "name": "TriggerManual"
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/foundations/register",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "assessment_id",
+              "value": "61ab6b7329aa7d731ad0e7a5be993893"
+            },
+            {
+              "name": "workflow_name",
+              "value": "Section 1 - Academy Registration"
+            },
+            {
+              "name": "tag",
+              "value": "foundations-course"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "faaf5f93-f444-4eba-adff-3ff244db208d",
+      "name": "SubmitRegistration",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YlkJMNV5icfVfdvU",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Academy Registration Workflow\nCreated by: Anshul Ahluwalia\nDate: 30/06/26\n\nThis workflow registers my n8n instance with the\nn8n Academy training system. It sends my assessment ID\nand workflow info to the Academy API.\n\nPart of: N8N101 Course, Section 1",
+        "height": 240,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -288
+      ],
+      "id": "c39baa7b-0062-4ad9-ac1c-36fa578b8338",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"orders\": [\n    { \"orderID\": 1, \"region\": \"Americas\", \"price\": 120 },\n    { \"orderID\": 2, \"region\": \"EMEA\", \"price\": 80 },\n    { \"orderID\": 3, \"region\": \"Americas\", \"price\": 200 }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        160
+      ],
+      "id": "b7db75a3-b1ec-46d5-a922-009e3174b7de",
+      "name": "Sample Order Data",
+      "notesInFlow": true,
+      "notes": "Creates a sample dataset with 3 orders across Americas and EMEA regions"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "orders",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "b9477c21-8640-4458-8eaf-bdc2ffd98502",
+      "name": "Split Out",
+      "notesInFlow": true,
+      "notes": "Converts the orders array into 3 individual items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f1e2d3c4-0001-4000-8000-000000000001",
+              "leftValue": "={{ $json.region }}",
+              "rightValue": "Americas",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        160
+      ],
+      "id": "d390ef7b-55dd-4beb-976a-c733f71855bf",
+      "name": "Filter Americas",
+      "notesInFlow": true,
+      "notes": "Keeps only orders where region = Americas (2 of 3 pass)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1e2d3c4-0002-4000-8000-000000000002",
+              "name": "price_with_tax",
+              "value": "={{ $json.price * 1.1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        160
+      ],
+      "id": "ea528099-c333-4909-acd4-ef989724be12",
+      "name": "Add 10% Tax",
+      "notesInFlow": true,
+      "notes": "Adds price_with_tax field using the expression: price * 1.1"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "price_with_tax"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        160
+      ],
+      "id": "be0e40cc-d9bb-4b28-9a9f-3ded8d563486",
+      "name": "Total Price",
+      "notesInFlow": true,
+      "notes": "Sums price_with_tax across all remaining items = 352"
+    }
+  ],
+  "pinData": {
+    "Sample Order Data": [
+      {
+        "json": {
+          "orders": [
+            {
+              "orderID": 1,
+              "region": "Americas",
+              "price": 120
+            },
+            {
+              "orderID": 2,
+              "region": "EMEA",
+              "price": 80
+            },
+            {
+              "orderID": 3,
+              "region": "Americas",
+              "price": 200
+            }
+          ]
+        }
+      }
+    ],
+    "Split Out": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120
+        }
+      },
+      {
+        "json": {
+          "orderID": 2,
+          "region": "EMEA",
+          "price": 80
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200
+        }
+      }
+    ],
+    "Filter Americas": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200
+        }
+      }
+    ],
+    "Add 10% Tax": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120,
+          "price_with_tax": 132
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200,
+          "price_with_tax": 220
+        }
+      }
+    ],
+    "Total Price": [
+      {
+        "json": {
+          "price_with_tax": 352
+        }
+      }
+    ]
+  },
+  "connections": {
+    "TriggerManual": {
+      "main": [
+        [
+          {
+            "node": "SubmitRegistration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample Order Data": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter Americas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Americas": {
+      "main": [
+        [
+          {
+            "node": "Add 10% Tax",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add 10% Tax": {
+      "main": [
+        [
+          {
+            "node": "Total Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f3dc5325-f9b4-42c0-9cce-659bde78a80d",
+  "meta": {
+    "instanceId": "1b64597dec4395c39ffbc6b418140ca74fd264cc184186212c5508ae650cb2cc"
+  },
+  "nodeGroups": [],
+  "id": "yazUG3Fb0rdG35Xl",
+  "tags": [
+    {
+      "updatedAt": "2026-06-30T08:14:51.053Z",
+      "createdAt": "2026-06-30T08:14:51.053Z",
+      "id": "ISDYvkvm5X3tIKOA",
+      "name": "n8n101"
+    }
+  ]
+}
